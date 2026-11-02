@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#061a22">
+  <meta name="description" content="Simulador interactivo de replicación del ADN.">
+  <title>DNA Unzip &amp; Copy — Escape Factory</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#inicio" aria-label="Ir al inicio">
+      <span class="brand-mark" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i>
+      </span>
+      <span><strong>DNA</strong> Unzip &amp; Copy</span>
+    </a>
+    <div class="topbar-meta">
+      <span class="status-dot"></span>
+      <span>LABORATORIO DE REPLICACIÓN</span>
+      <button class="icon-button" id="soundToggle" type="button" aria-label="Activar o desactivar sonidos" aria-pressed="false">♪</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="eyebrow"><span>REPLICACIÓN SEMICONSERVATIVA</span><i></i><span>SÍNTESIS 5′ → 3′</span></div>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="kicker">SIMULACIÓN INTERACTIVA</p>
+          <h1>Replicación de ADN,<br><em>paso a paso.</em></h1>
+          <p class="hero-text">Coordina las enzimas de una horquilla de replicación. Observa cómo cambia la molécula durante la iniciación, la elongación y la terminación.</p>
+          <button class="primary-button" id="startButton" type="button">
+            <span>COMENZAR PRÁCTICA</span><b>↗</b>
+          </button>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="orbital orbital-a"></div>
+          <div class="orbital orbital-b"></div>
+          <div class="dna-hero" id="dnaHero"></div>
+          <div class="data-tag tag-a"><span>5′</span> — ATCG</div>
+          <div class="data-tag tag-b">HELICASA <span>H01</span></div>
+          <div class="visual-index">01 / 05</div>
+        </div>
+      </div>
+      <div class="hero-footer">
+        <span>DESPLAZA PARA COMENZAR</span><i></i>
+        <div><b>OBJETIVO</b><span>Duplicar una molécula conservando su secuencia</span></div>
+      </div>
+    </section>
+
+    <section class="factory" id="simulador" aria-labelledby="factoryTitle">
+      <aside class="phase-rail" aria-label="Fases del simulador">
+        <p>RUTA DE PRODUCCIÓN</p>
+        <ol id="phaseList">
+          <li class="active" data-phase="1"><span>01</span><div><b>APERTURA</b><small>Iniciación · Helicasa + SSB</small></div></li>
+          <li data-phase="2"><span>02</span><div><b>CADENA LÍDER</b><small>Elongación · Síntesis continua</small></div></li>
+          <li data-phase="3"><span>03</span><div><b>CADENA RETRASADA</b><small>Elongación · Fragmentos de Okazaki</small></div></li>
+          <li data-phase="4"><span>04</span><div><b>ACABADO</b><small>Elongación · Reemplazo y ligación</small></div></li>
+          <li data-phase="5"><span>05</span><div><b>CONTROL</b><small>Terminación · Prueba de lectura</small></div></li>
+        </ol>
+        <div class="rail-note"><span>TIP</span><p>La síntesis de ADN siempre avanza en dirección <strong>5′ → 3′</strong>.</p></div>
+      </aside>
+
+      <div class="workspace">
+        <nav class="lifecycle" aria-label="Etapas generales de la replicación">
+          <div class="active" data-lifecycle="initiation"><span>01</span><b>Iniciación</b><small>Apertura y estabilización</small></div>
+          <i aria-hidden="true"></i>
+          <div data-lifecycle="elongation"><span>02</span><b>Elongación</b><small>Síntesis de ambas cadenas</small></div>
+          <i aria-hidden="true"></i>
+          <div data-lifecycle="termination"><span>03</span><b>Terminación</b><small>Revisión y liberación</small></div>
+        </nav>
+        <div class="workspace-head">
+          <div>
+            <span class="section-number" id="phaseNumber">FASE 01</span>
+            <h2 id="factoryTitle">Abrir la doble hélice</h2>
+          </div>
+          <div class="score-block">
+            <span>FIDELIDAD ESTIMADA</span>
+            <strong id="liveFidelity">100.0%</strong>
+          </div>
+        </div>
+
+        <div class="alert-bar" id="instruction" role="status">
+          <span class="alert-icon">!</span>
+          <p><b>MISIÓN:</b> Desliza la Helicasa, fija las proteínas SSB y descarga la tensión con la Topoisomerasa.</p>
+        </div>
+
+        <div class="lab-panel">
+          <div class="lab-grid" aria-hidden="true"></div>
+          <div class="dna-stage" id="dnaStage">
+            <div class="strand-label label-top">3′</div>
+            <div class="strand-label label-bottom">5′</div>
+            <div class="template-strand top-strand"></div>
+            <div class="template-strand bottom-strand"></div>
+            <div class="base-pairs" id="basePairs"></div>
+            <div class="synthesis-track leading-track" id="leadingTrack"><span></span></div>
+            <div class="okazaki-zone" id="okazakiZone"></div>
+            <div class="fork-glow"></div>
+            <div class="enzyme helicase" id="helicase" title="Helicasa"><span>H</span><small>HELICASA</small></div>
+            <div class="ssb-slots" id="ssbSlots">
+              <button type="button" data-slot="0">+ Añadir SSB</button>
+              <button type="button" data-slot="1">+ Añadir SSB</button>
+              <button type="button" data-slot="2">+ Añadir SSB</button>
+            </div>
+            <div class="primer-node" id="primerNode"><span>ARN</span></div>
+            <button class="polymerase enzyme-button" id="polymerase" type="button"><b>POL III</b><small>MANTÉN PRESIONADO</small></button>
+            <div class="scanner-line" id="scannerLine"></div>
+          </div>
+
+          <div class="controls" id="openingControls">
+            <label class="slider-control" for="helicaseSlider">
+              <span><b>ACTIVAR HELICASA</b><small>Rompe los puentes de hidrógeno</small></span>
+              <input id="helicaseSlider" type="range" min="0" max="100" value="0">
+              <output id="helicaseOutput">0%</output>
+            </label>
+            <div class="tension-control">
+              <div class="meter-copy"><span><b>TENSIÓN TORSIONAL</b><small>Superenrollamiento</small></span><strong id="tensionValue">12%</strong></div>
+              <div class="meter"><i id="tensionBar"></i></div>
+              <div class="topo-action">
+                <div class="topo-schematic" id="topoSchematic" aria-hidden="true">
+                  <div class="coil coil-a"></div>
+                  <div class="coil coil-b"></div>
+                  <div class="topo-clamp"><span>Topo</span></div>
+                  <i class="cut-site"></i>
+                </div>
+                <div class="topo-copy">
+                  <b id="topoState">Cadena bajo tensión</b>
+                  <small>La enzima corta, permite el giro y vuelve a sellar el ADN.</small>
+                </div>
+                <button id="topoButton" type="button"><span>↻</span> LIBERAR TENSIÓN</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-dock hidden" id="toolDock">
+            <span class="dock-label" id="dockLabel">ELIGE LA ENZIMA QUE NECESITAS</span>
+            <button type="button" data-tool="primase"><i>Pr</i><span><b>Primasa</b><small>Coloca cebador de ARN</small></span></button>
+            <button type="button" data-tool="pol3"><i>III</i><span><b>ADN Pol III</b><small>Extiende 5′ → 3′</small></span></button>
+            <button type="button" data-tool="pol1"><i>I</i><span><b>ADN Pol I</b><small>Reemplaza el ARN</small></span></button>
+            <button type="button" data-tool="ligase" draggable="true"><i>Li</i><span><b>Ligasa</b><small>Pegamento molecular</small></span></button>
+          </div>
+
+          <div class="action-row">
+            <div class="progress-copy"><span>PROGRESO DE FASE</span><div><i id="phaseProgress"></i></div></div>
+            <button class="next-button" id="nextButton" type="button" disabled>CONTINUAR <span>→</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="result hidden" id="result" aria-live="polite">
+      <div class="result-card">
+        <div class="scan-ring"><span id="resultScore">100</span><small>%</small></div>
+        <p class="kicker">REPLICACIÓN COMPLETADA</p>
+        <h2>Copia aprobada.</h2>
+        <p id="resultMessage">La actividad exonucleasa corrigió los desajustes y conservó la información genética.</p>
+        <div class="result-stats">
+          <div><span>HEBRAS OBTENIDAS</span><b>2</b></div>
+          <div><span>ERRORES CORREGIDOS</span><b id="errorsFixed">0</b></div>
+          <div><span>MODELO</span><b>SEMICONSERVATIVO</b></div>
+        </div>
+        <button class="primary-button" id="restartButton" type="button"><span>REPETIR CICLO</span><b>↻</b></button>
+      </div>
+    </section>
+  </main>
+
+  <footer><span>ESCAPE FACTORY / LAB 01</span><span>SIMULADOR EDUCATIVO DE REPLICACIÓN DEL ADN</span></footer>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="script.js"></script>
+</body>
+</html>
